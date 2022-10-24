@@ -1,10 +1,15 @@
 ### Provides data from MongoDB as a backend service
 
-#### Steps to get it working:
+-------
+### Steps to get it working:
 Install MongoDB community edition in local 
+
 Start MongoDB as a service or start process
+
 Jump to Mongo shell and use a new database called `workouts`
+
 Navigate to https://json-generator.com/# and use below snippet to generate data for the service
+
 `[
 '{{repeat(1, 7)}}',
 {
