@@ -22,7 +22,7 @@ function TopBar(props) {
     dates.push(...month);
 
     return (
-        <div className={"d-flex col-lg-8 mx-auto p-2"}>
+        <div className={"d-flex p-2 sticky-top bg-secondary col-lg-8 mx-auto"}>
             {/*<button className={"btn btn-outline-primary"} onClick={props.getAllWorkouts}>Show All Workouts</button>*/}
             <select className={"mx-2"} name="categoryFilter" onChange={props.handleCategoryChange}>
                 {categories.map(category => (

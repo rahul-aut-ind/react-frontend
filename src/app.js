@@ -4,6 +4,7 @@ import Header from "./Components/Header";
 import Login from "./Components/Login/Login";
 import PaginatedItems from "./Components/Pagination/Pagination";
 import TopBar from "./Components/TopBar";
+import WorkoutDetails from "./Components/WorkoutList/WorkoutDetails";
 
 let workoutsArr = [
     {
@@ -19,6 +20,7 @@ let workoutsArr = [
 function App() {
     const baseURL = "http://localhost:5000";
     const allWorkoutsEndpoint = '/workouts/all';
+    const workoutByIdEndpoint = '/workout/';
 
     const client = axios.create({
         baseURL: baseURL
@@ -27,6 +29,19 @@ function App() {
     function getAllWorkouts() {
         return new Promise((resolve, reject) => {
             client.get(allWorkoutsEndpoint).then(function (response) {
+                // console.log("Api Response>\n" + response.data);
+                resolve(response.data);
+            })
+                .catch(function (error) {
+                    console.log(error);
+                    reject(error);
+                })
+        });
+    }
+
+    function getWorkoutById(workoutId) {
+        return new Promise((resolve, reject) => {
+            client.get(workoutByIdEndpoint + workoutId).then(function (response) {
                 // console.log("Api Response>\n" + response.data);
                 resolve(response.data);
             })
@@ -53,6 +68,7 @@ function App() {
     const [filterCategory, updateFilterCategory] = useState(allCategories);
     const [filterDate, updateFilterDate] = useState(allDates);
     const [isLoggedIn, setIsLoggedIn] = useState(true || localStorage.getItem("isLoggedIn") === "yes");
+    const [selectedWorkout, updateSelectedWorkout] = useState(null);
 
 
     useEffect(() => {
@@ -102,24 +118,43 @@ function App() {
         updateFilterDate(selectedDate.target.value);
     };
 
+    function showWorkoutDetails(selectedWorkout) {
+        const workoutID = selectedWorkout.target.value;
+        getWorkoutById(workoutID).then((result) => {
+            updateSelectedWorkout(result);
+        });
+    }
+
+    function takeMeBack(){
+        updateSelectedWorkout(null);
+    }
+
     return (
         <>
             {!isLoggedIn && <Login isLoggedIn={updateLoginStatus}/>}
             <Header/>
-            <div className={'row'}>
-                <TopBar
-                    allDates={allDates}
-                    allCategories={allCategories}
-                    handleCategoryChange={handleCategoryChange}
-                    handleDateChange={handleDateChange}
-                >
-                    {workouts}
-                </TopBar>
-                <PaginatedItems
-                    itemsPerPage={20}
-                    workoutList={filteredWorkoutList}
-                />
-            </div>
+            {!selectedWorkout &&
+                <div>
+                    <TopBar
+                        allDates={allDates}
+                        allCategories={allCategories}
+                        handleCategoryChange={handleCategoryChange}
+                        handleDateChange={handleDateChange}
+                    >
+                        {workouts}
+                    </TopBar>
+                    <PaginatedItems
+                        itemsPerPage={20}
+                        workoutList={filteredWorkoutList}
+                        showWorkoutDetails={showWorkoutDetails}
+                    />
+                </div>
+            }
+            {selectedWorkout &&
+                <WorkoutDetails takeMeBack={takeMeBack}>
+                    {selectedWorkout}
+                </WorkoutDetails>
+            }
         </>
     );
 }

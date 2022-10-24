@@ -11,6 +11,7 @@ function WorkoutList(props) {
                 {props.children.map(workout => (
                     <Workouts
                         key={workout._id}
+                        showWorkoutDetails={props.showWorkoutDetails}
                     >
                         {workout}
                     </Workouts>

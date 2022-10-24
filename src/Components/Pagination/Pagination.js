@@ -38,7 +38,8 @@ export default function PaginatedItems(props) {
         <>
             <div className={"col-lg-8 mx-auto"}>
                 {/*<CreateWorkout createWorkout={createWorkoutHandler}/>*/}
-                <WorkoutList>
+                <WorkoutList showWorkoutDetails={props.showWorkoutDetails}
+                >
                     {currentWorkoutDisplayItems}
                 </WorkoutList>
             </div>
