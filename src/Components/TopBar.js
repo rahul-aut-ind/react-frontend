@@ -1,16 +1,26 @@
-import React from 'react';
-
+import React, {useContext, useReducer} from 'react';
+import WorkoutsContext from "./Context/WorkoutsContext";
 
 function TopBar(props) {
 
-    const categories = [], dates = [];
-    const month = [
-        "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"
-    ];
-    categories.push(props.allCategories);
-    //dates.push(props.allDates);
+    const context = useContext(WorkoutsContext);
 
-    const items = props.children;
+    function handleCategoryChange(selectedValue) {
+        context.onCategoryChange(selectedValue);
+        context.selectedCategory = selectedValue.target.value;
+        // console.log(context);
+    }
+
+    function handleDateChange(selectedValue) {
+        context.onDateChange(selectedValue);
+        context.selectedDate = selectedValue.target.value;
+        // console.log(context);
+    }
+
+    const categories = [], dates = [];
+    categories.push(props.allCategories);
+
+    const items = context.allWorkouts;//props.children;
 
     items.forEach((item) => {
         if (!categories.includes(item.category))
@@ -19,16 +29,17 @@ function TopBar(props) {
         if (!dates.includes(item.date))
             dates.push(item.date);
     });
-    //dates.push(...month);
 
     return (
         <div className={"d-flex p-2 sticky-top bg-secondary col-lg-8 mx-auto"}>
-            <select className={"mx-2"} name="categoryFilter" onChange={props.handleCategoryChange}>
+            <select className={"mx-2"} name="categoryFilter" onChange={handleCategoryChange}
+                    value={context.selectedCategory ? context.selectedCategory : undefined}>
                 {categories.map(category => (
                     <option key={category} value={category}>{category}</option>
                 ))}
             </select>
-            <select className={"mx-2"} name="dateFilter" onChange={props.handleDateChange}>
+            <select className={"mx-2"} name="dateFilter" onChange={handleDateChange}
+                    value={context.selectedDate ? context.selectedDate : undefined}>
                 <option key={props.allDates} value={props.allDates}>
                     {props.allDates}
                 </option>

@@ -5,6 +5,7 @@ import Login from "./Components/Login/Login";
 import PaginatedItems from "./Components/Pagination/Pagination";
 import TopBar from "./Components/TopBar";
 import WorkoutDetails from "./Components/WorkoutList/WorkoutDetails";
+import WorkoutsContext from "./Components/Context/WorkoutsContext";
 
 let workoutsArr = [
     {
@@ -95,7 +96,7 @@ function App() {
                 return workout.date === filterDate;
         });
         updateFilteredWorkoutList(tempFilteredWorkoutList);
-    }, [workouts, filterCategory, filterDate]);
+    }, [workouts, filterCategory, filterDate, selectedWorkout]);
 
 
     function updateLoginStatus(value) {
@@ -130,18 +131,27 @@ function App() {
     }
 
     return (
-        <>
-            {!isLoggedIn && <Login isLoggedIn={updateLoginStatus}/>}
+        <WorkoutsContext.Provider value={{
+            onCategoryChange: handleCategoryChange,
+            onDateChange: handleDateChange,
+            onShowWorkoutDetails: showWorkoutDetails,
+            onTakeMeBack: takeMeBack,
+            selectedDate: filterDate,
+            selectedCategory: filterCategory,
+            selectedWorkout: selectedWorkout,
+            allWorkouts: workouts,
+            filteredWorkouts: filteredWorkoutList
+        }}>
             <Header/>
+            {!isLoggedIn && <Login isLoggedIn={updateLoginStatus}/>}
             {!selectedWorkout &&
                 <div>
                     <TopBar
                         allDates={allDates}
                         allCategories={allCategories}
-                        handleCategoryChange={handleCategoryChange}
-                        handleDateChange={handleDateChange}
+                        // handleCategoryChange={handleCategoryChange}
+                        // handleDateChange={handleDateChange}
                     >
-                        {workouts}
                     </TopBar>
                     <PaginatedItems
                         itemsPerPage={20}
@@ -151,11 +161,9 @@ function App() {
                 </div>
             }
             {selectedWorkout &&
-                <WorkoutDetails takeMeBack={takeMeBack}>
-                    {selectedWorkout}
-                </WorkoutDetails>
+                <WorkoutDetails/>
             }
-        </>
+        </WorkoutsContext.Provider>
     );
 }
 
