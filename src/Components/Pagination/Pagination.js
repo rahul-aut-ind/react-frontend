@@ -12,6 +12,11 @@ export default function PaginatedItems(props) {
 
     useEffect(() => {
         setCurrentWorkoutDisplayItems(props.workoutList);
+
+        return ()=>{
+            // cleanup offset whenever filtered list changes
+            setItemOffset(0);
+        }
     }, [props.workoutList])
 
 
