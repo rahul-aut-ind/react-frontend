@@ -10,23 +10,26 @@ Jump to Mongo shell and use a new database called `workouts`
 
 Navigate to https://json-generator.com/# and use below snippet to generate data for the service
 
-`[
-'{{repeat(1, 7)}}',
+`
+[
+'{{repeat(600, 7)}}',
 {
 isAvailable: '{{bool()}}',
 image: 'https://picsum.photos/150/200',
-pName: '{{company().toUpperCase()}} Workout',
+pName: '{{company().toUpperCase()}} {{company().toUpperCase()}} Workout',
 desc: '{{lorem(1, "paragraphs")}}',
 date: function (tags) {
-var months = ['January', 'February', 'March','April','May','June','July','August','September','October','November','December'];
+var months = [new Date("2022-01-01"), new Date("2022-02-01"),new Date("2022-03-01"),new Date("2022-04-01"),new Date("2022-05-01"),new Date("2022-06-01"),new Date("2022-07-01"),new Date("2022-08-01"),new Date("2022-09-01"),new Date("2022-10-01"),new Date("2022-11-01"),new Date("2022-12-01")];
 return months[tags.integer(0, months.length - 1)];
 },
 category: function (tags) {
-var categories = ['Dance', 'Yoga', 'Meditation','Cardio','Walking','Stretching'];
+var categories = ['Dance', 'Yoga',
+'Meditation','Cardio','Walking','Stretching','Jogging','Mindful Breathing'];
 return categories[tags.integer(0, categories.length - 1)];
 }
 }
-]`
+]
+`
 
 Copy the generated data and using below command add to mongo 
 `db.workouts.insertMany(<copied data from above step>)`

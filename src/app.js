@@ -125,7 +125,7 @@ function App() {
         });
     }
 
-    function takeMeBack(){
+    function takeMeBack() {
         updateSelectedWorkout(null);
     }
 

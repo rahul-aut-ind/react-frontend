@@ -8,7 +8,7 @@ const WorkoutSchema = new Schema({
     isAvailable: Boolean,
     image: String,
     category: String,
-    date: String,
+    date: Date,
 });
 
 // Export the Schema

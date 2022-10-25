@@ -2,6 +2,22 @@
 
 ### This project relies on data from a backend service that should be running on "localhost:5000" to provide data to it.
 
+### Data from Backend is expected in below schema
+`{
+
+pName: 'Workout Name',
+
+desc: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Suscipit fuga autem maiores necessitatibus.',
+
+isAvailable: true,
+
+image: 'https://picsum.photos/150/200',
+
+category: 'Dance',
+
+date: '2022-12-01T00:00:00.000Z'
+
+}`
 ------
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 

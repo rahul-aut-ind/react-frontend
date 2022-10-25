@@ -8,7 +8,7 @@ function TopBar(props) {
         "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"
     ];
     categories.push(props.allCategories);
-    dates.push(props.allDates);
+    //dates.push(props.allDates);
 
     const items = props.children;
 
@@ -16,22 +16,26 @@ function TopBar(props) {
         if (!categories.includes(item.category))
             categories.push(item.category);
 
-        // if (!dates.includes(item.date))
-        //     dates.push(item.date);
+        if (!dates.includes(item.date))
+            dates.push(item.date);
     });
-    dates.push(...month);
+    //dates.push(...month);
 
     return (
         <div className={"d-flex p-2 sticky-top bg-secondary col-lg-8 mx-auto"}>
-            {/*<button className={"btn btn-outline-primary"} onClick={props.getAllWorkouts}>Show All Workouts</button>*/}
             <select className={"mx-2"} name="categoryFilter" onChange={props.handleCategoryChange}>
                 {categories.map(category => (
                     <option key={category} value={category}>{category}</option>
                 ))}
             </select>
             <select className={"mx-2"} name="dateFilter" onChange={props.handleDateChange}>
+                <option key={props.allDates} value={props.allDates}>
+                    {props.allDates}
+                </option>
                 {dates.map(date => (
-                    <option key={date} value={date}>{date}</option>
+                    <option key={date} value={date}>
+                        {new Date(date).toLocaleString('default', {month: 'long'})}
+                    </option>
                 ))}
             </select>
         </div>
