@@ -1,5 +1,4 @@
-import React, {useContext, useReducer, useState} from 'react';
-import Button from "./Button";
+import React, {useContext} from 'react';
 import WorkoutsContext from "../Context/WorkoutsContext";
 
 let style = {
@@ -7,7 +6,7 @@ let style = {
     fontSize: 15
 }
 
-function WorkoutDetails(props) {
+function WorkoutDetails() {
 
     const context = useContext(WorkoutsContext);
     const selectedWorkout = context.selectedWorkout;
@@ -31,20 +30,11 @@ function WorkoutDetails(props) {
                                     {new Date(selectedWorkout.date).toLocaleString('default', {month: 'long'})}
                                 </b>
                             </div>
-                            {/*<p className="card-text">*/}
-                            {/*    <small className="text-muted">......*/}
-                            {/*    </small>*/}
-                            {/*</p>*/}
                         </div>
                     </div>
                 </div>
             </div>
             <button className={"btn btn-warning"} onClick={context.onTakeMeBack}>Take me Back</button>
-            {/*<div className={"container"}>*/}
-            {/*    <button onClick={decrement}>-</button>*/}
-            {/*    <span>{state.count}</span>*/}
-            {/*    <button onClick={increment}>+</button>*/}
-            {/*</div>*/}
         </>
     )
 }

@@ -1,6 +1,7 @@
 ### React Frontend application. 
 
 ### This project relies on data from a backend service that should be running on "localhost:5000" to provide data to it.
+Please open the backend-service folder and follow the instruction in its readme file.
 
 ### Data from Backend is expected in below schema
 `{

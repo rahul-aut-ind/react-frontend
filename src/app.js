@@ -43,7 +43,6 @@ function App() {
     function getWorkoutById(workoutId) {
         return new Promise((resolve, reject) => {
             client.get(workoutByIdEndpoint + workoutId).then(function (response) {
-                // console.log("Api Response>\n" + response.data);
                 resolve(response.data);
             })
                 .catch(function (error) {
@@ -52,15 +51,6 @@ function App() {
                 })
         });
     }
-
-    // const fetchWorkouts = async () => {
-    //
-    //     const response = await client.get(allWorkoutsEndpoint);
-    //     const arrOfWorkouts = response.data.map(workout => {
-    //         return workout;
-    //     });
-    //     return arrOfWorkouts;
-    // }
 
     const allCategories = "All Categories";
     const allDates = "All Dates";
@@ -78,9 +68,6 @@ function App() {
             updateWorkouts(result);
             //localStorage.setItem("WorkoutList", JSON.stringify(workouts));
         });
-        // fetchWorkouts().then(result => {
-        //     updateWorkoutList(result);
-        // })
     }, []);
 
     useEffect(() => {
@@ -96,7 +83,7 @@ function App() {
                 return workout.date === filterDate;
         });
         updateFilteredWorkoutList(tempFilteredWorkoutList);
-    }, [workouts, filterCategory, filterDate, selectedWorkout]);
+    }, [workouts, filterCategory, filterDate]);
 
 
     function updateLoginStatus(value) {
@@ -107,7 +94,6 @@ function App() {
     }
 
     function handleCategoryChange(selectedCategory) {
-        //console.log(`Option selected:`, selectedCategory.target.value);
         updateFilterCategory(selectedCategory.target.value);
     };
 
@@ -149,8 +135,6 @@ function App() {
                     <TopBar
                         allDates={allDates}
                         allCategories={allCategories}
-                        // handleCategoryChange={handleCategoryChange}
-                        // handleDateChange={handleDateChange}
                     >
                     </TopBar>
                     <PaginatedItems
