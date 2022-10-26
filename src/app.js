@@ -22,6 +22,7 @@ function App() {
     const baseURL = "http://localhost:5000";
     const allWorkoutsEndpoint = '/workouts/all';
     const workoutByIdEndpoint = '/workout/';
+    const paginatedWorkouts = '/workouts';
 
     const client = axios.create({
         baseURL: baseURL
@@ -44,6 +45,24 @@ function App() {
         return new Promise((resolve, reject) => {
             client.get(workoutByIdEndpoint + workoutId).then(function (response) {
                 resolve(response.data);
+            })
+                .catch(function (error) {
+                    console.log(error);
+                    reject(error);
+                })
+        });
+    }
+
+    function getWorkoutsForPage(pageNo, itemsToDisplay) {
+        return new Promise((resolve, reject) => {
+            client.get(paginatedWorkouts, {
+                params: {
+                    pageNo: pageNo,
+                    itemsToDisplay: itemsToDisplay
+                },
+                // need to add body
+            }).then(function (response) {
+                resolve(response.data.results);
             })
                 .catch(function (error) {
                     console.log(error);

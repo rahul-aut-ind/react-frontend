@@ -8,8 +8,8 @@ const WorkoutSchema = new Schema({
     isAvailable: Boolean,
     image: String,
     category: String,
-    date: Date,
+    startDate: Date,
 });
 
 // Export the Schema
-module.exports = mongoose.model("Workout", WorkoutSchema);
+module.exports  = mongoose.model("Workout", WorkoutSchema);

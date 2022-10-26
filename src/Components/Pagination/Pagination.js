@@ -30,11 +30,8 @@ export default function PaginatedItems(props) {
 
     // Invoke when user click to request another page.
     function handlePageClick(event) {
-        // console.log(event.selected);
         const newOffset = (event.selected * props.itemsPerPage) % props.workoutList.length;
-        // console.log(
-        //     `User requested page number ${event.selected}, which is offset ${newOffset}`
-        // );
+
         setItemOffset(newOffset);
     };
 
