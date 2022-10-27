@@ -53,16 +53,18 @@ function App() {
         });
     }
 
-    function getWorkoutsForPage(pageNo, itemsToDisplay) {
+    function getWorkoutsForPage(pageNo, itemsToDisplay, category = "", startDate = "") {
         return new Promise((resolve, reject) => {
-            client.get(paginatedWorkouts, {
+            client.post(paginatedWorkouts, {
+                "category": category,
+                "startDate": startDate
+            }, {
                 params: {
                     pageNo: pageNo,
                     itemsToDisplay: itemsToDisplay
-                },
-                // need to add body
+                }
             }).then(function (response) {
-                resolve(response.data.results);
+                resolve(response.data);
             })
                 .catch(function (error) {
                     console.log(error);
@@ -83,6 +85,9 @@ function App() {
 
     useEffect(() => {
         localStorage.clear();
+        getWorkoutsForPage(1, 20, "").then((result) => {
+            console.log(result);
+        })
         getAllWorkouts().then((result) => {
             updateWorkouts(result);
             //localStorage.setItem("WorkoutList", JSON.stringify(workouts));
