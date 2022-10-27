@@ -16,7 +16,7 @@ function Workouts(props) {
             <div className="d-flex">
                 <div style={style}>Category: <b>{props.children.category}</b></div>
                 <div style={style}>StartDate
-                    : <b>{new Date(props.children.date).toLocaleString('default', {month: 'long'})}</b></div>
+                    : <b>{new Date(props.children.startDate).toLocaleString('default', {month: 'long'})}</b></div>
                 {props.children.isAvailable ?
                     <button onClick={props.showWorkoutDetails}
                             value={props.children._id}

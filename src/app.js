@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext, useReducer} from 'react';
 import axios from "axios";
 import Header from "./Components/Header";
 import PaginatedItems from "./Components/Pagination/Pagination";
@@ -52,7 +52,11 @@ function App() {
         });
     }
 
-    function getWorkoutsForPage(pageNo, itemsToDisplay, category = "", startDate = "") {
+    function getWorkoutsForPage(pageNo = 1, itemsToDisplay = 20, category = "", startDate = "") {
+        // undefined case handling
+        category = category ? category : "";
+        startDate = startDate ? startDate : "";
+
         return new Promise((resolve, reject) => {
             client.post(paginatedWorkouts, {
                 "category": category,
@@ -79,17 +83,22 @@ function App() {
     const [filterCategory, updateFilterCategory] = useState(allCategories);
     const [filterDate, updateFilterDate] = useState(allDates);
     const [selectedWorkout, updateSelectedWorkout] = useState(null);
+    const [totalPages, setTotalPages] = useState(0);
 
 
     useEffect(() => {
         localStorage.clear();
-        getWorkoutsForPage(1, 20, "").then((result) => {
-            console.log(result);
+        let category = (filterCategory === allCategories) ? "" : filterCategory;
+        let startDate = (filterDate === allDates) ? "" : filterDate;
+
+        getWorkoutsForPage(1, 20, category, startDate).then((result) => {
+            updateWorkouts(result.contents);
+            setTotalPages(result.totalPages);
         })
-        getAllWorkouts().then((result) => {
-            updateWorkouts(result);
-            //localStorage.setItem("WorkoutList", JSON.stringify(workouts));
-        });
+        // getAllWorkouts().then((result) => {
+        //     updateWorkouts(result);
+        //     //localStorage.setItem("WorkoutList", JSON.stringify(workouts));
+        // });
     }, []);
 
     useEffect(() => {
@@ -106,6 +115,17 @@ function App() {
         });
         updateFilteredWorkoutList(tempFilteredWorkoutList);
     }, [workouts, filterCategory, filterDate]);
+
+    function handlePageChange(pageNo) {
+        let category = (filterCategory === allCategories) ? "" : filterCategory;
+        let startDate = (filterDate === allDates) ? "" : filterDate;
+
+        getWorkoutsForPage(pageNo.selected, 20, category, startDate).then((result) => {
+            console.log("handlePageChange", result);
+            updateFilteredWorkoutList(result.contents);
+            setTotalPages(result.totalPages);
+        })
+    }
 
     function handleCategoryChange(selectedCategory) {
         updateFilterCategory(selectedCategory.target.value);
@@ -136,6 +156,9 @@ function App() {
             onDateChange: handleDateChange,
             onShowWorkoutDetails: showWorkoutDetails,
             onTakeMeBack: takeMeBack,
+            onPageChange: handlePageChange,
+            totalPages: totalPages,
+            itemsToDisplayInPage: 20,
             selectedDate: filterDate,
             selectedCategory: filterCategory,
             selectedWorkout: selectedWorkout,
@@ -151,9 +174,9 @@ function App() {
                     >
                     </TopBar>
                     <PaginatedItems
-                        itemsPerPage={20}
-                        workoutList={filteredWorkoutList}
-                        showWorkoutDetails={showWorkoutDetails}
+                        // itemsPerPage={20}
+                        //workoutList={filteredWorkoutList}
+                        // showWorkoutDetails={showWorkoutDetails}
                     />
                 </div>
             }

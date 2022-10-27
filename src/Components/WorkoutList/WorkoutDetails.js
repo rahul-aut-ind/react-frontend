@@ -27,7 +27,7 @@ function WorkoutDetails() {
                             <div style={style}>Category: <b>{selectedWorkout.category}</b></div>
                             <div style={style}>StartDate
                                 : <b>
-                                    {new Date(selectedWorkout.date).toLocaleString('default', {month: 'long'})}
+                                    {new Date(selectedWorkout.startDate).toLocaleString('default', {month: 'long'})}
                                 </b>
                             </div>
                         </div>

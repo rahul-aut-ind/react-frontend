@@ -63,6 +63,7 @@ app.post("/workouts", (req, res) => {
 
     // get query params
     let {pageNo = 1, itemsToDisplay = 20} = req.query;
+    if (pageNo < 1) pageNo = 1;
 
     const defaultFilter = {$ne: null};
     const category = req.body.category === "" ? defaultFilter : req.body.category;
@@ -73,8 +74,6 @@ app.post("/workouts", (req, res) => {
     let FromDate = undefined;
     let totalCount = undefined;
     let filterCriteria;
-
-    if (pageNo < 1) pageNo = 1;
 
     if (date != defaultFilter) {
         ToDate = new Date(new Date(date).getFullYear(), new Date(date).getMonth() + 1).toISOString();

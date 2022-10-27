@@ -8,6 +8,8 @@ let WorkoutsContext = React.createContext({
 
     selectedCategory: undefined,
     selectedDate: undefined,
+    itemsToDisplayInPage: undefined,
+    totalPages: undefined,
 
     selectedWorkout: undefined,
     allWorkouts: [],

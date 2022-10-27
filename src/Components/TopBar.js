@@ -1,4 +1,4 @@
-import React, {useContext, useReducer} from 'react';
+import React, {useContext} from 'react';
 import WorkoutsContext from "./Context/WorkoutsContext";
 
 function TopBar(props) {
@@ -26,8 +26,8 @@ function TopBar(props) {
         if (!categories.includes(item.category))
             categories.push(item.category);
 
-        if (!dates.includes(item.date))
-            dates.push(item.date);
+        if (!dates.includes(item.startDate))
+            dates.push(item.startDate);
     });
 
     return (

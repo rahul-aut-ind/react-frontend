@@ -1,51 +1,36 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import ReactPaginate from 'react-paginate';
 import WorkoutList from "../WorkoutList/WorkoutList";
 import './Pagination.css';
+import WorkoutsContext from "../Context/WorkoutsContext";
 
-export default function PaginatedItems(props) {
+export default function PaginatedItems() {
 
-    let [currentWorkoutDisplayItems, setCurrentWorkoutDisplayItems] = useState(props.workoutList);
+    const context = useContext(WorkoutsContext);
+
     let [pageCount, setPageCount] = useState(0);
-    let [itemOffset, setItemOffset] = useState(0);
 
 
     useEffect(() => {
-        setCurrentWorkoutDisplayItems(props.workoutList);
-
-        return ()=>{
-            // cleanup offset whenever filtered list changes
-            setItemOffset(0);
-        }
-    }, [props.workoutList])
-
-
-    useEffect(() => {
-        const endOffset = itemOffset + props.itemsPerPage;
-        setCurrentWorkoutDisplayItems(props.workoutList.slice(itemOffset, endOffset));
-        setPageCount(Math.ceil(props.workoutList.length / props.itemsPerPage));
-        //console.log("Current Items > " + JSON.stringify(currentWorkoutDisplayItems));
-    }, [itemOffset, props.itemsPerPage, props.workoutList]);
-
+        setPageCount(context.totalPages);
+        // return () => {
+        //     // cleanup offset whenever filtered list changes
+        //     setItemOffset(0);
+        // }
+    }, [context.filteredWorkouts, context.totalPages])
 
     // Invoke when user click to request another page.
     function handlePageClick(event) {
-        const newOffset = (event.selected * props.itemsPerPage) % props.workoutList.length;
-
-        setItemOffset(newOffset);
+        context.onPageChange(event);
     };
-
 
     return (
         <>
             <div className={"col-lg-8 mx-auto"}>
                 {/*<CreateWorkout createWorkout={createWorkoutHandler}/>*/}
-                <WorkoutList showWorkoutDetails={props.showWorkoutDetails}
-                >
-                    {currentWorkoutDisplayItems}
-                </WorkoutList>
+                <WorkoutList/>
             </div>
-            {props.workoutList.length > Number(props.itemsPerPage) &&
+            {!(pageCount.length === 0) &&
                 <div className={"col-lg-8 mx-auto pt-3"}>
                     <ReactPaginate
                         breakLabel="..."
@@ -55,7 +40,6 @@ export default function PaginatedItems(props) {
                         marginPagesDisplayed={1}
                         pageCount={pageCount}
                         previousLabel="<prev"
-                        //renderOnZeroPageCount={null}
                         breakClassName={"page-item"}
                         breakLinkClassName={"page-link"}
                         containerClassName={"pagination"}
