@@ -23,6 +23,8 @@ function App() {
     const workoutByIdEndpoint = '/workout/';
     const paginatedWorkouts = '/workouts';
 
+    const ITEMS_PER_PAGE = 20;
+
     const client = axios.create({
         baseURL: baseURL
     });
@@ -52,7 +54,7 @@ function App() {
         });
     }
 
-    function getWorkoutsForPage(pageNo = 1, itemsToDisplay = 20, category = "", startDate = "") {
+    function getWorkoutsForPage(pageNo = 1, itemsToDisplay = ITEMS_PER_PAGE, category = "", startDate = "") {
         // undefined case handling
         category = category ? category : "";
         startDate = startDate ? startDate : "";
@@ -91,7 +93,7 @@ function App() {
         let category = (filterCategory === allCategories) ? "" : filterCategory;
         let startDate = (filterDate === allDates) ? "" : filterDate;
 
-        getWorkoutsForPage(1, 20, category, startDate).then((result) => {
+        getWorkoutsForPage(1, ITEMS_PER_PAGE, category, startDate).then((result) => {
             updateWorkouts(result.contents);
             setTotalPages(result.totalPages);
         })
@@ -102,6 +104,15 @@ function App() {
     }, []);
 
     useEffect(() => {
+
+        let category = (filterCategory === allCategories) ? "" : filterCategory;
+        let startDate = (filterDate === allDates) ? "" : filterDate;
+
+        getWorkoutsForPage(1, ITEMS_PER_PAGE, category, startDate).then((result) => {
+            updateFilteredWorkoutList(result.contents);
+            setTotalPages(result.totalPages);
+        })
+
         let tempFilteredWorkoutList = workouts.filter((workout) => {
             if (filterCategory === allCategories)
                 return workout;
@@ -120,8 +131,7 @@ function App() {
         let category = (filterCategory === allCategories) ? "" : filterCategory;
         let startDate = (filterDate === allDates) ? "" : filterDate;
 
-        getWorkoutsForPage(pageNo.selected, 20, category, startDate).then((result) => {
-            console.log("handlePageChange", result);
+        getWorkoutsForPage(pageNo.selected, ITEMS_PER_PAGE, category, startDate).then((result) => {
             updateFilteredWorkoutList(result.contents);
             setTotalPages(result.totalPages);
         })
@@ -131,13 +141,13 @@ function App() {
         updateFilterCategory(selectedCategory.target.value);
     };
 
-    // function createWorkoutHandler(newWorkout) {
-    //     updateWorkoutList([newWorkout, ...workouts]);
-    // }
-
     function handleDateChange(selectedDate) {
         updateFilterDate(selectedDate.target.value);
     };
+
+    // function createWorkoutHandler(newWorkout) {
+    //     updateWorkoutList([newWorkout, ...workouts]);
+    // }
 
     function showWorkoutDetails(selectedWorkout) {
         const workoutID = selectedWorkout.target.value;
@@ -158,7 +168,7 @@ function App() {
             onTakeMeBack: takeMeBack,
             onPageChange: handlePageChange,
             totalPages: totalPages,
-            itemsToDisplayInPage: 20,
+            itemsToDisplayInPage: ITEMS_PER_PAGE,
             selectedDate: filterDate,
             selectedCategory: filterCategory,
             selectedWorkout: selectedWorkout,
@@ -173,11 +183,7 @@ function App() {
                         allCategories={allCategories}
                     >
                     </TopBar>
-                    <PaginatedItems
-                        // itemsPerPage={20}
-                        //workoutList={filteredWorkoutList}
-                        // showWorkoutDetails={showWorkoutDetails}
-                    />
+                    <PaginatedItems/>
                 </div>
             }
             {selectedWorkout &&

@@ -9,14 +9,15 @@ export default function PaginatedItems() {
     const context = useContext(WorkoutsContext);
 
     let [pageCount, setPageCount] = useState(0);
+    let [itemOffset, setItemOffset] = useState(0);
 
 
     useEffect(() => {
         setPageCount(context.totalPages);
-        // return () => {
-        //     // cleanup offset whenever filtered list changes
-        //     setItemOffset(0);
-        // }
+        return () => {
+            // cleanup offset whenever filtered list changes
+            setItemOffset(0);
+        }
     }, [context.filteredWorkouts, context.totalPages])
 
     // Invoke when user click to request another page.

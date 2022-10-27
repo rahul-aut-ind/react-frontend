@@ -67,7 +67,7 @@ app.post("/workouts", (req, res) => {
 
     const defaultFilter = {$ne: null};
     const category = req.body.category === "" ? defaultFilter : req.body.category;
-    const date = (req.body.startDate === "" || !(req.body.startDate instanceof Date)) ? defaultFilter : req.body.startDate;
+    const date = req.body.startDate === "" ? defaultFilter : req.body.startDate;
     const skip = (pageNo - 1) * itemsToDisplay;
 
     let ToDate = undefined;
