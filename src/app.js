@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import axios from "axios";
 import Header from "./Components/Header";
-import Login from "./Components/Login/Login";
 import PaginatedItems from "./Components/Pagination/Pagination";
 import TopBar from "./Components/TopBar";
 import WorkoutDetails from "./Components/WorkoutList/WorkoutDetails";
@@ -79,7 +78,6 @@ function App() {
     const [filteredWorkoutList, updateFilteredWorkoutList] = useState([]);
     const [filterCategory, updateFilterCategory] = useState(allCategories);
     const [filterDate, updateFilterDate] = useState(allDates);
-    const [isLoggedIn, setIsLoggedIn] = useState(true || localStorage.getItem("isLoggedIn") === "yes");
     const [selectedWorkout, updateSelectedWorkout] = useState(null);
 
 
@@ -108,14 +106,6 @@ function App() {
         });
         updateFilteredWorkoutList(tempFilteredWorkoutList);
     }, [workouts, filterCategory, filterDate]);
-
-
-    function updateLoginStatus(value) {
-        if (value) {
-            localStorage.setItem("isLoggedIn", "yes");
-            setIsLoggedIn(value);
-        }
-    }
 
     function handleCategoryChange(selectedCategory) {
         updateFilterCategory(selectedCategory.target.value);
@@ -153,7 +143,6 @@ function App() {
             filteredWorkouts: filteredWorkoutList
         }}>
             <Header/>
-            {!isLoggedIn && <Login isLoggedIn={updateLoginStatus}/>}
             {!selectedWorkout &&
                 <div>
                     <TopBar
