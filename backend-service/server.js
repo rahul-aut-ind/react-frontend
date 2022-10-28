@@ -56,7 +56,6 @@ app.get("/workouts", (req, res) => {
         }
         const skip = (pageNo - 1) * itemsToDisplay;
 
-        let totalCount = 0;
         const defaultFilterCriteria = {$ne: null};
         let filterCriteria = {category: isEmpty(category) ? defaultFilterCriteria : {$eq: category}};
 
@@ -71,7 +70,7 @@ app.get("/workouts", (req, res) => {
         }
 
         //count documents
-        Workouts.count(filterCriteria, function (err, count) {
+        Workouts.count(filterCriteria, function (err, totalCount) {
             if (err) {
                 return res.status(500).json({
                     errMsg: "Some Err getting response from Server..",
@@ -81,7 +80,7 @@ app.get("/workouts", (req, res) => {
                     contents: [],
                 })
             }
-            if (count === 0) {
+            if (totalCount === 0) {
                 return res.json({
                     errMsg: "No Documents match criteria..",
                     totalPages: 0,
@@ -89,8 +88,6 @@ app.get("/workouts", (req, res) => {
                     itemsOnPage: 0,
                     contents: [],
                 })
-            } else {
-                totalCount = count;
             }
             //get paginated documents
             Workouts.find(filterCriteria).sort({_id: -1})
