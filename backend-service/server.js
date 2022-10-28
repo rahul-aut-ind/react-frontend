@@ -42,76 +42,71 @@ app.get("/workout/:id", (req, res) => {
         });
 });
 
-app.get("/workouts/all", (req, res) => {
-
-    // Use Mongoose to get all the workouts
-    Workouts.find({})
-        .then(function (dbWorkouts) {
-            res.json(dbWorkouts);
-        })
-        .catch(function (err) {
-            console.log(err);
-            res.json(err);
-        });
-});
-
 app.get("/workouts", (req, res) => {
-
-    const defaultFilter = {$ne: null};
     // get query params
-    let {pageNo = 1, itemsToDisplay = 20, category = defaultFilter, startDate = defaultFilter} = req.query;
-
-    if (pageNo < 1) pageNo = 1;
+    let {pageNo = 1, itemsToDisplay = 20, category = "", startDate = ""} = req.query;
 
     function isEmpty(value) {
         return value === undefined || value === null || value === "\"\"" || value === "\'\'" || value.length === 0;
     }
 
-    category = isEmpty(category) ? defaultFilter : category;
-    startDate = isEmpty(startDate) ? defaultFilter : startDate;
-    const skip = (pageNo - 1) * itemsToDisplay;
-
-    let ToDate = undefined;
-    let FromDate = undefined;
-    let totalCount = undefined;
-    let filterCriteria;
-
     try {
-        if (startDate != defaultFilter) {
-
-            ToDate = new Date(new Date(startDate).getFullYear(), new Date(startDate).getMonth() + 1).toISOString();
-            FromDate = new Date(new Date(startDate).getFullYear(), new Date(startDate).getMonth()).toISOString();
-
-            filterCriteria = {category: category, startDate: {$gte: FromDate, $lte: ToDate}};
-
-        } else {
-            filterCriteria = {category: category, startDate: defaultFilter};
+        if (pageNo < 1) {
+            pageNo = 1;
         }
+        const skip = (pageNo - 1) * itemsToDisplay;
+
+        let totalCount = 0;
+        const defaultFilterCriteria = {$ne: null};
+        let filterCriteria = {category: isEmpty(category) ? defaultFilterCriteria : {$eq: category}};
+
+        if (isEmpty(startDate)) {
+            filterCriteria = Object.assign(filterCriteria, {startDate: defaultFilterCriteria});
+        } else {
+            const dateObj = new Date(startDate);
+            let ToDate = new Date(dateObj.getFullYear(), dateObj.getMonth() + 1).toISOString();
+            let FromDate = new Date(dateObj.getFullYear(), dateObj.getMonth()).toISOString();
+
+            filterCriteria = Object.assign(filterCriteria, {startDate: {$gte: FromDate, $lte: ToDate}});
+        }
+
         //count documents
         Workouts.count(filterCriteria, function (err, count) {
             if (err) {
-                totalCount = 0;
+                return res.status(500).json({
+                    errMsg: "Some Err getting response from Server..",
+                    totalPages: 0,
+                    currentPage: 0,
+                    itemsOnPage: 0,
+                    contents: [],
+                })
+            }
+            if (count === 0) {
+                return res.json({
+                    errMsg: "No Documents match criteria..",
+                    totalPages: 0,
+                    currentPage: 0,
+                    itemsOnPage: 0,
+                    contents: [],
+                })
             } else {
                 totalCount = count;
             }
-            if (totalCount === 0) {
-                throw "No Documents match criteria..";
-            } else {
-                //get paginated documents
-                Workouts.find(filterCriteria).sort({_id: -1})
-                    .skip(skip).limit(itemsToDisplay).then(function (contents) {
+            //get paginated documents
+            Workouts.find(filterCriteria).sort({_id: -1})
+                .skip(skip).limit(itemsToDisplay).then(function (contents) {
 
-                    return res.json({
-                        totalPages: Math.ceil(totalCount / itemsToDisplay),
-                        currentPage: pageNo,
-                        itemsOnPage: contents.length,
-                        contents: contents,
-                    })
-                });
-            }
+                return res.json({
+                    totalPages: Math.ceil(totalCount / itemsToDisplay),
+                    currentPage: pageNo,
+                    itemsOnPage: contents.length,
+                    contents: contents,
+                })
+            });
         })
     } catch (err) {
         return res.json({
+            errMsg: err.toString(),
             totalPages: 0,
             currentPage: 0,
             itemsOnPage: 0,
