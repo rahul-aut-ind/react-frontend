@@ -8,19 +8,17 @@ function TopBar(props) {
     function handleCategoryChange(selectedValue) {
         context.onCategoryChange(selectedValue);
         context.selectedCategory = selectedValue.target.value;
-        // console.log(context);
     }
 
     function handleDateChange(selectedValue) {
         context.onDateChange(selectedValue);
         context.selectedDate = selectedValue.target.value;
-        // console.log(context);
     }
 
     const categories = [], dates = [];
     categories.push(props.allCategories);
 
-    const items = context.allWorkouts;//props.children;
+    const items = context.allWorkouts;
 
     items.forEach((item) => {
         if (!categories.includes(item.category))
