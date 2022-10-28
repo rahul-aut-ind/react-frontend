@@ -59,7 +59,7 @@ app.get("/workouts", (req, res) => {
 
     const defaultFilter = {$ne: null};
     // get query params
-    let {pageNo = 1, itemsToDisplay = 20, category = "", startDate = ""} = req.query;
+    let {pageNo = 1, itemsToDisplay = 20, category = defaultFilter, startDate = defaultFilter} = req.query;
 
     if (pageNo < 1) pageNo = 1;
 
@@ -84,7 +84,12 @@ app.get("/workouts", (req, res) => {
             filterCriteria = {category: category, startDate: {$gte: FromDate, $lte: ToDate}};
             //console.log("Date Filtered > " + filterCriteria);
         } catch (err) {
-            return res.status(500).json({"msg": 'No Document in Database matching criteria..'});
+            return res.json({
+                totalPages: 0,
+                currentPage: 0,
+                itemsOnPage: 0,
+                contents: "No Document in Database matching criteria..",
+            });
         }
     } else {
         filterCriteria = {category: category, startDate: defaultFilter};
@@ -99,7 +104,12 @@ app.get("/workouts", (req, res) => {
             //console.log("Total Count > " + totalCount);
         }
         if (totalCount === 0) {
-            return res.status(500).json({"msg": 'No Document in Database matching criteria..'});
+            return res.json({
+                totalPages: 0,
+                currentPage: 1,
+                itemsOnPage: 0,
+                contents: "No Document in Database matching criteria..",
+            });
         } else {
             //get paginated documents
             Workouts.find(filterCriteria).sort({_id: -1})
