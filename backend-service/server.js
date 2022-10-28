@@ -14,10 +14,6 @@ app.use(bodyParser.urlencoded({
 
 app.use(bodyParser.json());
 app.use(cors())
-// app.use((req, res, next) => {
-//     res.header('Access-Control-Allow-Origin', '*');
-//     next();
-// });
 
 // Configure Mongo
 const db = "mongodb://localhost/workouts";
@@ -46,56 +42,48 @@ app.get("/workout/:id", (req, res) => {
         });
 });
 
-app.get("/workouts/all", (req, res) => {
-
-    // Use Mongoose to get all the workouts
-    Workouts.find({})
-        .then(function (dbWorkouts) {
-            res.json(dbWorkouts);
-        })
-        .catch(function (err) {
-            console.log(err);
-            res.json(err);
-        });
-});
-
-app.post("/workouts", (req, res) => {
-
+app.get("/workouts", (req, res) => {
     // get query params
-    let {pageNo = 1, itemsToDisplay = 20} = req.query;
-    if (pageNo < 1) pageNo = 1;
+    let {pageNo = 1, itemsToDisplay = 20, category = "", startDate = ""} = req.query;
 
-    const defaultFilter = {$ne: null};
-    const category = req.body.category === "" ? defaultFilter : req.body.category;
-    const date = req.body.startDate === "" ? defaultFilter : req.body.startDate;
-    const skip = (pageNo - 1) * itemsToDisplay;
-
-    let ToDate = undefined;
-    let FromDate = undefined;
-    let totalCount = undefined;
-    let filterCriteria;
-
-    if (date != defaultFilter) {
-        ToDate = new Date(new Date(date).getFullYear(), new Date(date).getMonth() + 1).toISOString();
-        FromDate = new Date(new Date(date).getFullYear(), new Date(date).getMonth()).toISOString();
-
-        filterCriteria = {category: category, startDate: {$gte: FromDate, $lte: ToDate}};
-        //console.log("Date Filtered > " + filterCriteria);
-    } else {
-        filterCriteria = {category: category, startDate: defaultFilter};
-        //console.log("All Dates > " + filterCriteria);
+    function isEmpty(value) {
+        return value === undefined || value === null || value === "\"\"" || value === "\'\'" || value.length === 0;
     }
-    //count documents
-    Workouts.count(filterCriteria, function (err, count) {
-        if (err) {
-            totalCount = 0;
-        } else {
-            totalCount = count;
-            //console.log("Total Count > " + totalCount);
+
+    try {
+        if (pageNo < 1) {
+            pageNo = 1;
         }
-        if (totalCount === 0) {
-            return res.status(500).json({"msg": 'No Document in Database..'});
+        const skip = (pageNo - 1) * itemsToDisplay;
+
+        const defaultFilterCriteria = {$ne: null};
+        let filterCriteria = {category: isEmpty(category) ? defaultFilterCriteria : {$eq: category}};
+
+        if (isEmpty(startDate)) {
+            filterCriteria = Object.assign(filterCriteria, {startDate: defaultFilterCriteria});
         } else {
+            const dateObj = new Date(startDate);
+            let ToDate = new Date(dateObj.getFullYear(), dateObj.getMonth() + 1).toISOString();
+            let FromDate = new Date(dateObj.getFullYear(), dateObj.getMonth()).toISOString();
+
+            filterCriteria = Object.assign(filterCriteria, {startDate: {$gte: FromDate, $lte: ToDate}});
+        }
+
+        //count documents
+        Workouts.count(filterCriteria, function (err, totalCount) {
+            if (err) {
+                return res.status(500).json({
+                    errMsg: "Some Err getting response from Server.."
+                })
+            }
+            if (totalCount === 0) {
+                return res.json({
+                    totalPages: 0,
+                    currentPage: 0,
+                    itemsOnPage: 0,
+                    contents: [],
+                })
+            }
             //get paginated documents
             Workouts.find(filterCriteria).sort({_id: -1})
                 .skip(skip).limit(itemsToDisplay).then(function (contents) {
@@ -107,7 +95,14 @@ app.post("/workouts", (req, res) => {
                     contents: contents,
                 })
             });
-        }
-    })
-
+        })
+    } catch (err) {
+        return res.json({
+            errMsg: err.toString(),
+            totalPages: 0,
+            currentPage: 0,
+            itemsOnPage: 0,
+            contents: [],
+        });
+    }
 })

@@ -28,7 +28,6 @@ export default function PaginatedItems() {
     return (
         <>
             <div className={"col-lg-8 mx-auto"}>
-                {/*<CreateWorkout createWorkout={createWorkoutHandler}/>*/}
                 <WorkoutList/>
             </div>
             {!(pageCount.length === 0) &&

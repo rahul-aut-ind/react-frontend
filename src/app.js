@@ -6,20 +6,8 @@ import TopBar from "./Components/TopBar";
 import WorkoutDetails from "./Components/WorkoutList/WorkoutDetails";
 import WorkoutsContext from "./Components/Context/WorkoutsContext";
 
-let workoutsArr = [
-    {
-        pName: 'D-Workout4',
-        desc: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Suscipit fuga autem maiores necessitatibus.',
-        isAvailable: true,
-        image: 'https://picsum.photos/150/200',
-        category: 'Dance',
-        date: 'October'
-    }
-]
-
 function App() {
     const baseURL = "http://localhost:5000";
-    const allWorkoutsEndpoint = '/workouts/all';
     const workoutByIdEndpoint = '/workout/';
     const paginatedWorkouts = '/workouts';
 
@@ -29,19 +17,7 @@ function App() {
         baseURL: baseURL
     });
 
-    function getAllWorkouts() {
-        return new Promise((resolve, reject) => {
-            client.get(allWorkoutsEndpoint).then(function (response) {
-                // console.log("Api Response>\n" + response.data);
-                resolve(response.data);
-            })
-                .catch(function (error) {
-                    console.log(error);
-                    reject(error);
-                })
-        });
-    }
-
+    // Get details of a single workout
     function getWorkoutById(workoutId) {
         return new Promise((resolve, reject) => {
             client.get(workoutByIdEndpoint + workoutId).then(function (response) {
@@ -54,19 +30,19 @@ function App() {
         });
     }
 
+    // Get List of Workouts in a paginated manner
     function getWorkoutsForPage(pageNo = 1, itemsToDisplay = ITEMS_PER_PAGE, category = "", startDate = "") {
         // undefined case handling
         category = category ? category : "";
         startDate = startDate ? startDate : "";
 
         return new Promise((resolve, reject) => {
-            client.post(paginatedWorkouts, {
-                "category": category,
-                "startDate": startDate
-            }, {
+            client.get(paginatedWorkouts, {
                 params: {
                     pageNo: pageNo,
-                    itemsToDisplay: itemsToDisplay
+                    itemsToDisplay: itemsToDisplay,
+                    category: category,
+                    startDate: startDate
                 }
             }).then(function (response) {
                 resolve(response.data);
@@ -78,8 +54,11 @@ function App() {
         });
     }
 
+    // declaration for Filter Default Values
     const allCategories = "All Categories";
     const allDates = "All Dates";
+
+    // Declaring the states used throughout the app
     const [workouts, updateWorkouts] = useState([]);
     const [filteredWorkoutList, updateFilteredWorkoutList] = useState([]);
     const [filterCategory, updateFilterCategory] = useState(allCategories);
@@ -97,10 +76,6 @@ function App() {
             updateWorkouts(result.contents);
             setTotalPages(result.totalPages);
         })
-        // getAllWorkouts().then((result) => {
-        //     updateWorkouts(result);
-        //     //localStorage.setItem("WorkoutList", JSON.stringify(workouts));
-        // });
     }, []);
 
     useEffect(() => {
@@ -144,10 +119,6 @@ function App() {
     function handleDateChange(selectedDate) {
         updateFilterDate(selectedDate.target.value);
     };
-
-    // function createWorkoutHandler(newWorkout) {
-    //     updateWorkoutList([newWorkout, ...workouts]);
-    // }
 
     function showWorkoutDetails(selectedWorkout) {
         const workoutID = selectedWorkout.target.value;

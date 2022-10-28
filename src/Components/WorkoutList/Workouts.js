@@ -1,7 +1,6 @@
 import React from 'react';
 
 let style = {
-    //padding: '0px 10px',
     fontSize: 13,
     width: 500
 }
