@@ -76,52 +76,46 @@ app.get("/workouts", (req, res) => {
     let totalCount = undefined;
     let filterCriteria;
 
-    if (startDate != defaultFilter) {
-        try {
+    try {
+        if (startDate != defaultFilter) {
+
             ToDate = new Date(new Date(startDate).getFullYear(), new Date(startDate).getMonth() + 1).toISOString();
             FromDate = new Date(new Date(startDate).getFullYear(), new Date(startDate).getMonth()).toISOString();
 
             filterCriteria = {category: category, startDate: {$gte: FromDate, $lte: ToDate}};
-            //console.log("Date Filtered > " + filterCriteria);
-        } catch (err) {
-            return res.json({
-                totalPages: 0,
-                currentPage: 0,
-                itemsOnPage: 0,
-                contents: "No Document in Database matching criteria..",
-            });
-        }
-    } else {
-        filterCriteria = {category: category, startDate: defaultFilter};
-        //console.log("All Dates > " + filterCriteria);
-    }
-    //count documents
-    Workouts.count(filterCriteria, function (err, count) {
-        if (err) {
-            totalCount = 0;
-        } else {
-            totalCount = count;
-            //console.log("Total Count > " + totalCount);
-        }
-        if (totalCount === 0) {
-            return res.json({
-                totalPages: 0,
-                currentPage: 1,
-                itemsOnPage: 0,
-                contents: "No Document in Database matching criteria..",
-            });
-        } else {
-            //get paginated documents
-            Workouts.find(filterCriteria).sort({_id: -1})
-                .skip(skip).limit(itemsToDisplay).then(function (contents) {
 
-                return res.json({
-                    totalPages: Math.ceil(totalCount / itemsToDisplay),
-                    currentPage: pageNo,
-                    itemsOnPage: contents.length,
-                    contents: contents,
-                })
-            });
+        } else {
+            filterCriteria = {category: category, startDate: defaultFilter};
         }
-    })
+        //count documents
+        Workouts.count(filterCriteria, function (err, count) {
+            if (err) {
+                totalCount = 0;
+            } else {
+                totalCount = count;
+            }
+            if (totalCount === 0) {
+                throw "No Documents match criteria..";
+            } else {
+                //get paginated documents
+                Workouts.find(filterCriteria).sort({_id: -1})
+                    .skip(skip).limit(itemsToDisplay).then(function (contents) {
+
+                    return res.json({
+                        totalPages: Math.ceil(totalCount / itemsToDisplay),
+                        currentPage: pageNo,
+                        itemsOnPage: contents.length,
+                        contents: contents,
+                    })
+                });
+            }
+        })
+    } catch (err) {
+        return res.json({
+            totalPages: 0,
+            currentPage: 0,
+            itemsOnPage: 0,
+            contents: [],
+        });
+    }
 })
