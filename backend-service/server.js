@@ -73,16 +73,11 @@ app.get("/workouts", (req, res) => {
         Workouts.count(filterCriteria, function (err, totalCount) {
             if (err) {
                 return res.status(500).json({
-                    errMsg: "Some Err getting response from Server..",
-                    totalPages: 0,
-                    currentPage: 0,
-                    itemsOnPage: 0,
-                    contents: [],
+                    errMsg: "Some Err getting response from Server.."
                 })
             }
             if (totalCount === 0) {
                 return res.json({
-                    errMsg: "No Documents match criteria..",
                     totalPages: 0,
                     currentPage: 0,
                     itemsOnPage: 0,
