@@ -8,7 +8,6 @@ import WorkoutsContext from "./Components/Context/WorkoutsContext";
 
 function App() {
     const baseURL = "http://localhost:5000";
-    const allWorkoutsEndpoint = '/workouts/all';
     const workoutByIdEndpoint = '/workout/';
     const paginatedWorkouts = '/workouts';
 
@@ -17,20 +16,6 @@ function App() {
     const client = axios.create({
         baseURL: baseURL
     });
-
-    // deprecated as per feedback of handling pagination on server side instead of client side
-    function getAllWorkouts() {
-        return new Promise((resolve, reject) => {
-            client.get(allWorkoutsEndpoint).then(function (response) {
-                // console.log("Api Response>\n" + response.data);
-                resolve(response.data);
-            })
-                .catch(function (error) {
-                    console.log(error);
-                    reject(error);
-                })
-        });
-    }
 
     // Get details of a single workout
     function getWorkoutById(workoutId) {
